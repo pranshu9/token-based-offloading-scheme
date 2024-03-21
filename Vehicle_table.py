@@ -1,49 +1,76 @@
-class VehicleStatus:
-    def __init__(self, position, server_range):
-        self.position = position  # -1 for behind, 0 for no information, +1 for forward
-        self.server_range = server_range  # Server range, e.g., "A", "B", "C", etc.
+#include <iostream>
+#include <unordered_map>
+#include <string>
 
-class VehicleTable:
-    def __init__(self):
-        self.table = {}
+using namespace std;
 
-    def update_status(self, vehicle_id, position, server_range):
-        self.table[vehicle_id] = VehicleStatus(position, server_range)
+class VehicleStatus {
+public:
+    int position;         // -1 for behind, 0 for no information, +1 for forward
+    string serverRange;   // Server range, e.g., "A", "B", "C", etc.
 
-    def get_status(self, vehicle_id):
-        return self.table.get(vehicle_id, VehicleStatus(0, ""))  # Return default values if the vehicle is not found
+    // Constructor
+    VehicleStatus(int pos, string range) : position(pos), serverRange(range) {}
+};
 
-    def print_table(self):
-        for vehicle_id, status in self.table.items():
-            print(f"Vehicle {vehicle_id}: Position - {status.position}, Server Range - {status.server_range}")
+class VehicleTable {
+private:
+    unordered_map<int, VehicleStatus> table;
 
-# Example usage:
-vehicle_table = VehicleTable()
+public:
+    // Method to update status for a vehicle
+    void updateStatus(int vehicleId, int position, string serverRange) {
+        table[vehicleId] = VehicleStatus(position, serverRange);
+    }
 
-# Update status for Vehicle 1
-vehicle_table.update_status(1, -1, "A")
+    // Method to get status of a vehicle
+    VehicleStatus getStatus(int vehicleId) {
+        if (table.find(vehicleId) != table.end()) {
+            return table[vehicleId];
+        } else {
+            return VehicleStatus(0, ""); // Return default values if vehicle not found
+        }
+    }
 
-# Update status for Vehicle 2
-vehicle_table.update_status(2, -1, "B")
+    // Method to print the vehicle table
+    void printTable() {
+        for (auto& entry : table) {
+            cout << "Vehicle " << entry.first << ": Position - " << entry.second.position << ", Server Range - " << entry.second.serverRange << endl;
+        }
+    }
+};
 
-# Update status for Vehicle 3 (no information about itself)
-vehicle_table.update_status(3, 0, "")
+int main() {
+    // Create an instance of VehicleTable
+    VehicleTable vehicleTable;
 
-# Update status for Vehicle 4
-vehicle_table.update_status(4, 0, "B")
+    // Update status for Vehicle 1
+    vehicleTable.updateStatus(1, -1, "A");
 
-# Update status for Vehicle 5
-vehicle_table.update_status(5, 0, "B and C")
+    // Update status for Vehicle 2
+    vehicleTable.updateStatus(2, -1, "B");
 
-# Update status for Vehicle 6
-vehicle_table.update_status(6, 0, "C")
+    // Update status for Vehicle 3 (no information about itself)
+    vehicleTable.updateStatus(3, 0, "");
 
-# Update status for Vehicle 7
-vehicle_table.update_status(7, 1, "")  # +1 indicates it is in the forward direction
+    // Update status for Vehicle 4
+    vehicleTable.updateStatus(4, 0, "B");
 
-# Print the vehicle table
-vehicle_table.print_table()
+    // Update status for Vehicle 5
+    vehicleTable.updateStatus(5, 0, "B and C");
 
-# Get the status of Vehicle 3
-status_vehicle_3 = vehicle_table.get_status(3)
-print(f"Status of Vehicle 3: Position - {status_vehicle_3.position}, Server Range - {status_vehicle_3.server_range}")
+    // Update status for Vehicle 6
+    vehicleTable.updateStatus(6, 0, "C");
+
+    // Update status for Vehicle 7
+    vehicleTable.updateStatus(7, 1, ""); // +1 indicates it is in the forward direction
+
+    // Print the vehicle table
+    vehicleTable.printTable();
+
+    // Get the status of Vehicle 3
+    VehicleStatus statusVehicle3 = vehicleTable.getStatus(3);
+    cout << "Status of Vehicle 3: Position - " << statusVehicle3.position << ", Server Range - " << statusVehicle3.serverRange << endl;
+
+    return 0;
+}
