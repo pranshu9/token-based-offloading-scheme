@@ -1,44 +1,71 @@
-from collections import deque
+#include <iostream>
+#include <deque>
 
-class Task:
-    def __init__(self, vehicle_id, token_count):
-        self.vehicle_id = vehicle_id
-        self.token_count = token_count
+using namespace std;
 
-class MultiLevelFeedbackQueue:
-    def __init__(self):
-        self.queue_with_tokens = deque()    # Queue 1: Tasks with tokens
-        self.queue_without_tokens = deque()  # Queue 2: Tasks without tokens
+// Task class
+class Task {
+public:
+    int vehicleId;
+    int tokenCount;
 
-    def add_task(self, task):
-        if task.token_count > 0:
-            self.queue_with_tokens.append(task)
-        else:
-            self.queue_without_tokens.append(task)
+    // Constructor
+    Task(int id, int count) : vehicleId(id), tokenCount(count) {}
+};
 
-    def process_tasks(self):
-        while self.queue_with_tokens or self.queue_without_tokens:
-            if self.queue_with_tokens:
-                self.process_task(self.queue_with_tokens.popleft())
+// MultiLevelFeedbackQueue class
+class MultiLevelFeedbackQueue {
+private:
+    deque<Task> queueWithTokens;      // Queue 1: Tasks with tokens
+    deque<Task> queueWithoutTokens;   // Queue 2: Tasks without tokens
 
-            if self.queue_without_tokens:
-                self.process_task(self.queue_without_tokens.popleft())
+public:
+    // Method to add a task to the appropriate queue
+    void addTask(Task task) {
+        if (task.tokenCount > 0) {
+            queueWithTokens.push_back(task);
+        } else {
+            queueWithoutTokens.push_back(task);
+        }
+    }
 
-    def process_task(self, task):
-        print(f"Processing Task for Vehicle {task.vehicle_id} with {task.token_count} tokens.")
-        # Add additional processing logic as needed
+    // Method to process tasks from both queues
+    void processTasks() {
+        while (!queueWithTokens.empty() || !queueWithoutTokens.empty()) {
+            if (!queueWithTokens.empty()) {
+                processTask(queueWithTokens.front());
+                queueWithTokens.pop_front();
+            }
 
-# Example: Using the MultiLevelFeedbackQueue
-mlfq = MultiLevelFeedbackQueue()
+            if (!queueWithoutTokens.empty()) {
+                processTask(queueWithoutTokens.front());
+                queueWithoutTokens.pop_front();
+            }
+        }
+    }
 
-# Adding tasks to the MLFQ
-task1 = Task(1, 2)  # Vehicle 1 with 2 tokens
-task2 = Task(2, 0)  # Vehicle 2 with 0 tokens
-task3 = Task(3, 1)  # Vehicle 3 with 1 token
+    // Method to process a single task
+    void processTask(Task task) {
+        cout << "Processing Task for Vehicle " << task.vehicleId << " with " << task.tokenCount << " tokens." << endl;
+        // Add additional processing logic as needed
+    }
+};
 
-mlfq.add_task(task1)
-mlfq.add_task(task2)
-mlfq.add_task(task3)
+int main() {
+    // Using the MultiLevelFeedbackQueue
+    MultiLevelFeedbackQueue mlfq;
 
-# Processing tasks in the MLFQ
-mlfq.process_tasks()
+    // Adding tasks to the MLFQ
+    Task task1(1, 2);  // Vehicle 1 with 2 tokens
+    Task task2(2, 0);  // Vehicle 2 with 0 tokens
+    Task task3(3, 1);  // Vehicle 3 with 1 token
+
+    mlfq.addTask(task1);
+    mlfq.addTask(task2);
+    mlfq.addTask(task3);
+
+    // Processing tasks in the MLFQ
+    mlfq.processTasks();
+
+    return 0;
+}
