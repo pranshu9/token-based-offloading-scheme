@@ -1,44 +1,66 @@
-class MecServerTable:
-    def __init__(self, server_name, initial_tokens):
-        self.server_name = server_name
-        self.available_tokens = initial_tokens
-        self.consumed_tokens = 0
+#include <iostream>
+#include <string>
 
-    def grant_token(self):
-        if self.available_tokens > 0:
-            self.available_tokens -= 1
-            self.consumed_tokens += 1
-            return True
-        else:
-            return False
+using namespace std;
 
-    def release_token(self):
-        self.available_tokens += 1
-        self.consumed_tokens -= 1
+class MecServerTable {
+private:
+    string serverName;
+    int availableTokens;
+    int consumedTokens;
 
-    def get_status(self):
-        return {
-            "Server Name": self.server_name,
-            "Available Tokens": self.available_tokens,
-            "Consumed Tokens": self.consumed_tokens,
+public:
+    // Constructor
+    MecServerTable(string name, int initialTokens) : serverName(name), availableTokens(initialTokens), consumedTokens(0) {}
+
+    // Method to grant a token
+    bool grantToken() {
+        if (availableTokens > 0) {
+            availableTokens--;
+            consumedTokens++;
+            return true;
+        } else {
+            return false;
         }
+    }
 
-# Example usage:
-server_a = MecServerTable("Server A", initial_tokens=2)
-server_b = MecServerTable("Server B", initial_tokens=3)
+    // Method to release a token
+    void releaseToken() {
+        availableTokens++;
+        consumedTokens--;
+    }
 
-# Grant a token from Server A
-if server_a.grant_token():
-    print("Token granted by Server A")
-else:
-    print("Token request denied by Server A")
+    // Method to get the status of the server
+    void getStatus() {
+        cout << "Server Name: " << serverName << endl;
+        cout << "Available Tokens: " << availableTokens << endl;
+        cout << "Consumed Tokens: " << consumedTokens << endl;
+    }
+};
 
-# Release a token back to Server A
-server_a.release_token()
-print("Token released back to Server A")
+int main() {
+    // Create instances of MecServerTable
+    MecServerTable serverA("Server A", 2);
+    MecServerTable serverB("Server B", 3);
 
-# Get the status of Server A
-print(server_a.get_status())
+    // Grant a token from Server A
+    if (serverA.grantToken()) {
+        cout << "Token granted by Server A" << endl;
+    } else {
+        cout << "Token request denied by Server A" << endl;
+    }
 
-# Get the status of Server B
-print(server_b.get_status())
+    // Release a token back to Server A
+    serverA.releaseToken();
+    cout << "Token released back to Server A" << endl;
+
+    // Get the status of Server A
+    cout << "Status of Server A:" << endl;
+    serverA.getStatus();
+
+    // Get the status of Server B
+    cout << "Status of Server B:" << endl;
+    serverB.getStatus();
+
+    return 0;
+}
